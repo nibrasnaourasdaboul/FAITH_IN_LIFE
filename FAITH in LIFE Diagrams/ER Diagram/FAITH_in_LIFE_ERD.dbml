@@ -1,0 +1,1780 @@
+Table User {
+  user_id uuid [pk]
+  email string [unique]
+  phone string
+  password_hash string
+  full_name string
+  account_status string
+  mfa_enabled boolean
+  created_at datetime
+  last_login_at datetime
+}
+
+Table Role {
+  role_id uuid [pk]
+  role_code string [unique]
+  role_name string
+  description string
+}
+
+Table Permission {
+  permission_id uuid [pk]
+  permission_code string [unique]
+  description string
+}
+
+Table UserRole {
+  user_role_id uuid [pk]
+  user_id uuid
+  role_id uuid
+  assigned_at datetime
+}
+
+Table RolePermission {
+  role_permission_id uuid [pk]
+  role_id uuid
+  permission_id uuid
+}
+
+Table LoginSession {
+  session_id uuid [pk]
+  user_id uuid
+  device_info string
+  ip_address string
+  status string
+  started_at datetime
+  ended_at datetime
+}
+
+Table LoginAttempt {
+  attempt_id uuid [pk]
+  user_id uuid
+  success boolean
+  ip_address string
+  failure_reason string
+  attempted_at datetime
+}
+
+Table AuthToken {
+  token_id uuid [pk]
+  user_id uuid
+  token_type string
+  token_hash string
+  expires_at datetime
+  revoked boolean
+}
+
+Table PatientProfile {
+  patient_id uuid [pk]
+  user_id uuid [unique]
+  birth_date date
+  gender string
+  national_id string
+  occupation string
+  work_posture_notes string
+  primary_language string
+}
+
+Table DoctorProfile {
+  doctor_id uuid [pk]
+  user_id uuid [unique]
+  professional_type string 
+  medical_title string
+  specialization string
+  years_of_experience int
+  clinic_name string
+  is_verified boolean
+  is_available boolean
+}
+
+
+Table GuardianProfile {
+  guardian_id uuid [pk]
+  user_id uuid [unique]
+  relationship_type string
+  emergency_contact boolean
+}
+
+Table AdminProfile {
+  admin_id uuid [pk]
+  user_id uuid [unique]
+}
+
+Table UserBanRecord {
+  ban_id uuid [pk]
+  user_id uuid
+  banned_by_admin_id uuid
+  reason string
+  banned_at datetime
+  lifts_at datetime
+  status string
+}
+
+Table PasswordResetRequest {
+  reset_id uuid [pk]
+  user_id uuid
+  token_hash string
+  expires_at datetime
+  used boolean
+}
+
+Table ConsentPolicy {
+  policy_id uuid [pk]
+  policy_code string [unique]
+  version string
+  content_uri string
+  effective_from datetime
+}
+
+Table PrivacyConsent {
+  consent_id uuid [pk]
+  user_id uuid
+  policy_id uuid
+  consent_scope string
+  accepted boolean
+  accepted_at datetime
+  revoked_at datetime
+}
+
+Table NotificationPreference {
+  preference_id uuid [pk]
+  user_id uuid [unique]
+  medical_alerts_enabled boolean
+  session_reminders_enabled boolean
+  emergency_alerts_enabled boolean
+  channel_preference string
+}
+
+Table LicenseCredential {
+  license_id uuid [pk]
+  doctor_id uuid
+  license_number string [unique]
+  issuing_authority string
+  issue_date date
+  expiry_date date
+  document_uri string
+  status string
+}
+
+Table LicenseReview {
+  review_id uuid [pk]
+  license_id uuid
+  admin_id uuid
+  decision string
+  notes string
+  reviewed_at datetime
+}
+
+Table SpecialtyExpertise {
+  expertise_id uuid [pk]
+  doctor_id uuid
+  specialty_name string
+  expertise_level string
+  certification_uri string
+}
+
+Table PatientGuardianLink {
+  link_id uuid [pk]
+  patient_id uuid
+  guardian_id uuid
+  link_status string
+  requested_at datetime
+  approved_at datetime
+}
+
+Table CareEpisode {
+  episode_id uuid [pk]
+  patient_id uuid
+  episode_title string
+  injury_type string
+  status string
+  opened_on date
+  closed_on date
+}
+
+Table Diagnosis {
+  diagnosis_id uuid [pk]
+  episode_id uuid
+  diagnosis_code string
+  diagnosis_name string
+  severity string
+  diagnosed_on date
+}
+
+Table CaseStatusHistory {
+  history_id uuid [pk]
+  episode_id uuid
+  from_status string
+  to_status string
+  changed_by_role string
+  changed_at datetime
+}
+
+Table CareAssignment {
+  assignment_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  doctor_id uuid
+  care_role string 
+  assignment_status string
+  started_at datetime
+  ended_at datetime
+  is_primary boolean
+}
+
+Table DoctorChangeRequest {
+  change_request_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  current_doctor_id uuid
+  requested_doctor_id uuid
+  reason string
+  status string
+  requested_at datetime
+  decided_at datetime
+}
+
+Table ClinicalComplaint {
+  complaint_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  chief_complaint string
+  pain_level string
+  onset_notes string
+  submitted_at datetime
+  status string
+}
+
+Table TriageResult {
+  triage_id uuid [pk]
+  complaint_id uuid [unique]
+  urgency_level string
+  suggested_specialty string
+  ai_rationale string
+  triaged_at datetime
+  ai_engine_id uuid
+  ai_run_id uuid
+}
+
+Table UnassignedCase {
+  case_id uuid [pk]
+  complaint_id uuid [unique]
+  priority string
+  queue_status string
+  queued_at datetime
+}
+
+Table CaseAssignment {
+  case_assignment_id uuid [pk]
+  case_id uuid
+  doctor_id uuid
+  admin_id uuid
+  assignment_notes string
+  assigned_at datetime
+}
+
+Table DoctorCandidateReview {
+  candidate_review_id uuid [pk]
+  patient_id uuid
+  doctor_id uuid
+  match_score string
+  decision string
+  reviewed_at datetime
+}
+
+Table MedicalRecord {
+  record_id uuid [pk]
+  episode_id uuid [unique]
+  record_status string
+  opened_at datetime
+  last_updated_at datetime
+  encryption_status string
+}
+
+Table DemographicProfile {
+  demographic_id uuid [pk]
+  record_id uuid [unique]
+  height_cm float
+  weight_kg float
+  blood_type string
+  address string
+  emergency_notes string
+}
+
+Table MedicalHistoryEntry {
+  history_id uuid [pk]
+  record_id uuid
+  history_type string
+  description string
+  event_date date
+  source string
+}
+
+Table ChronicCondition {
+  condition_id uuid [pk]
+  record_id uuid
+  condition_name string
+  severity string
+  diagnosed_on date
+  management_notes string
+}
+
+Table ClinicalDocument {
+  document_id uuid [pk]
+  record_id uuid
+  author_user_id uuid
+  document_type string
+  title string
+  content_uri string
+  created_at datetime
+}
+
+Table ImagingStudy {
+  study_id uuid [pk]
+  record_id uuid
+  modality string
+  body_region string
+  status string
+  captured_at datetime
+  uploaded_at datetime
+}
+
+Table ImagingSeries {
+  series_id uuid [pk]
+  study_id uuid
+  series_uid string
+  description string
+  instance_count int
+}
+
+Table ImagingInstance {
+  instance_id uuid [pk]
+  series_id uuid
+  file_id uuid
+  sop_instance_uid string
+  frame_number int
+}
+
+Table ImagingQualityCheck {
+  quality_id uuid [pk]
+  study_id uuid [unique]
+  quality_status string
+  issues string
+  checked_at datetime
+}
+
+Table ClinicalInterpretation {
+  interpretation_id uuid [pk]
+  study_id uuid
+  doctor_id uuid
+  findings string
+  impression string
+  interpreted_at datetime
+}
+
+Table SimplifiedExplanation {
+  explanation_id uuid [pk]
+  interpretation_id uuid [unique]
+  plain_language_text string
+  visual_aid_uri string
+  created_at datetime
+}
+
+Table RecordShareRequest {
+  share_id uuid [pk]
+  record_id uuid
+  patient_id uuid
+  requester_doctor_id uuid
+  scope string
+  consent_status string
+  requested_at datetime
+  expires_at datetime
+  decided_at datetime
+}
+
+Table ShareRecipient {
+  share_recipient_id uuid [pk]
+  share_id uuid
+  recipient_user_id uuid
+  access_level string
+}
+
+Table RecordShareItem {
+  share_item_id uuid [pk]
+  share_id uuid
+  item_type string
+  item_ref_id uuid
+}
+
+Table ReferralSummary {
+  summary_id uuid [pk]
+  share_id uuid
+  generated_by_ai_id uuid
+  summary_text string
+  doctor_edits string
+  approval_status string
+  generated_at datetime
+}
+
+Table CommunityShareConsent {
+  community_consent_id uuid [pk]
+  record_id uuid
+  patient_id uuid
+  anonymized boolean
+  status string
+  approved_at datetime
+  revoked_at datetime
+}
+
+Table AnonymizedCaseSnapshot {
+  snapshot_id uuid [pk]
+  community_consent_id uuid
+  snapshot_payload_uri string
+  created_at datetime
+}
+
+Table Exercise {
+  exercise_id uuid [pk]
+  created_by_admin_id uuid
+  name string
+  description string
+  target_joints string
+  suggested_reps int
+  performance_instructions string
+  publish_status string
+}
+
+Table ExerciseMedia {
+  media_id uuid [pk]
+  exercise_id uuid
+  file_id uuid
+  media_type string
+  language_code string
+  guidance_mode string
+}
+
+Table ExerciseCategory {
+  category_id uuid [pk]
+  category_name string [unique]
+  description string
+}
+
+Table ExerciseCategoryLink {
+  link_id uuid [pk]
+  exercise_id uuid
+  category_id uuid
+}
+
+Table SafeAngularRange {
+  range_id uuid [pk]
+  exercise_id uuid
+  joint_name string
+  min_angle_deg float
+  max_angle_deg float
+  notes string
+}
+
+Table Contraindication {
+  contraindication_id uuid [pk]
+  exercise_id uuid
+  condition_name string
+  severity string
+  guidance string
+}
+
+Table ClinicalProtocol {
+  protocol_id uuid [pk]
+  title string
+  version string
+  source string
+  content_uri string
+  is_approved boolean
+  approved_by_doctor_id uuid
+  approved_at datetime
+}
+
+Table RehabilitationPlan {
+  plan_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  doctor_id uuid
+  protocol_id uuid
+  plan_name string
+  goals string
+  status string
+  start_date date
+  end_date date
+  generated_by string
+  ai_run_id uuid
+  approval_status string 
+  approved_by_doctor_id uuid
+  approved_at datetime
+}
+
+Table PlanExercise {
+  plan_exercise_id uuid [pk]
+  plan_id uuid
+  exercise_id uuid
+  sets int
+  reps int
+  frequency string
+  intensity_notes string
+  sequence_order int
+}
+
+Table PlanRevision {
+  revision_id uuid [pk]
+  plan_id uuid
+  revised_by_doctor_id uuid
+  revision_reason string
+  changes_summary string
+  revised_at datetime
+  proposed_by string 
+  ai_run_id uuid
+  approval_status string 
+}
+
+Table ProviderAvailability {
+  availability_id uuid [pk]
+  doctor_id uuid
+  weekday string
+  start_time time
+  end_time time
+  is_active boolean
+}
+
+Table AppointmentSlot {
+  slot_id uuid [pk]
+  availability_id uuid
+  slot_start datetime
+  slot_end datetime
+  slot_status string
+}
+
+Table Appointment {
+  appointment_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  slot_id uuid
+  appointment_type string
+  status string
+  cancel_reason string
+  scheduled_at datetime
+}
+
+Table AppointmentStatusHistory {
+  appt_history_id uuid [pk]
+  appointment_id uuid
+  from_status string
+  to_status string
+  changed_at datetime
+}
+
+Table RehabSession {
+  session_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  plan_id uuid
+  plan_exercise_id uuid
+  scheduled_at datetime
+  started_at datetime
+  ended_at datetime
+  session_status string
+  compliance_score float
+  requires_guardian boolean
+}
+
+Table SessionAssessment {
+  assessment_id uuid [pk]
+  session_id uuid [unique]
+  pain_before int
+  pain_after int
+  fatigue_score int
+  patient_notes string
+}
+
+Table SessionAttendance {
+  attendance_id uuid [pk]
+  session_id uuid
+  guardian_id uuid
+  presence_confirmed boolean
+  confirmed_at datetime
+  notes string
+}
+
+Table SessionReminder {
+  reminder_id uuid [pk]
+  session_id uuid
+  guardian_id uuid
+  sent_at datetime
+  delivery_status string
+  channel string
+  notification_id uuid
+}
+
+Table CaregiverGuidance {
+  guidance_id uuid [pk]
+  guardian_id uuid
+  exercise_id uuid
+  plain_instructions string
+  safety_tips string
+  created_at datetime
+}
+
+Table AIEngine {
+  ai_engine_id uuid [pk]
+  engine_name string
+  version string
+  operational_status string
+  last_heartbeat_at datetime
+}
+
+Table DeviceCaptureSession {
+  capture_id uuid [pk]
+  session_id uuid [unique]
+  device_type string
+  device_model string
+  fps float
+  tracking_distance_m float
+  capture_status string
+}
+
+Table MotionAnalysis {
+  analysis_id uuid [pk]
+  capture_id uuid [unique]
+  ai_engine_id uuid
+  overall_form_score float
+  completed_reps int
+  pose_tracking_status string
+  smoothing_quality float
+  analyzed_at datetime
+}
+
+Table MotionSample {
+  sample_id uuid [pk]
+  analysis_id uuid
+  frame_index int
+  sampled_at datetime
+  tracking_confidence float
+  skeleton_payload_uri string
+}
+
+Table JointMeasurement {
+  measurement_id uuid [pk]
+  analysis_id uuid
+  joint_name string
+  angle_deg float
+  target_angle_deg float
+  rom_percent float
+  within_safe_range boolean
+  captured_at datetime
+}
+
+Table MotionFeedbackEvent {
+  feedback_id uuid [pk]
+  analysis_id uuid
+  feedback_type string
+  message string
+  media_mode string
+  error_duration_ms float
+  emitted_at datetime
+}
+
+Table VitalSignObservation {
+  vital_id uuid [pk]
+  analysis_id uuid
+  vital_type string
+  vital_value float
+  risk_flag string
+  observed_at datetime
+}
+
+Table SafetyIncident {
+  incident_id uuid [pk]
+  analysis_id uuid
+  incident_type string
+  severity string
+  detected_signs string
+  detected_at datetime
+}
+
+Table EmergencyStop {
+  stop_id uuid [pk]
+  incident_id uuid [unique]
+  session_halted boolean
+  halted_at datetime
+  halt_reason string
+}
+
+Table MotionReview {
+  review_id uuid [pk]
+  analysis_id uuid
+  doctor_id uuid
+  review_notes string
+  outputs_approved boolean
+  rule_adjustments string
+  reviewed_at datetime
+}
+
+Table GamificationProfile {
+  gamification_id uuid [pk]
+  patient_id uuid [unique]
+  total_points int
+  current_level string
+  streak_days int
+}
+
+Table RewardPointTx {
+  tx_id uuid [pk]
+  gamification_id uuid
+  session_id uuid
+  points_delta int
+  reason string
+  created_at datetime
+}
+
+Table RewardCatalog {
+  reward_id uuid [pk]
+  reward_name string
+  points_cost int
+  reward_type string
+  is_active boolean
+}
+
+Table RewardRedemption {
+  redemption_id uuid [pk]
+  gamification_id uuid
+  reward_id uuid
+  status string
+  redeemed_at datetime
+  expires_at datetime
+}
+
+Table Badge {
+  badge_id uuid [pk]
+  badge_code string [unique]
+  badge_name string
+  criteria string
+}
+
+Table PatientBadge {
+  patient_badge_id uuid [pk]
+  patient_id uuid
+  badge_id uuid
+  awarded_at datetime
+}
+
+Table MotivationMessage {
+  motivation_id uuid [pk]
+  patient_id uuid
+  ai_engine_id uuid
+  message_text string
+  trigger_reason string
+  sent_at datetime
+}
+
+Table DailyRecoveryBoard {
+  board_id uuid [pk]
+  patient_id uuid
+  board_date date
+  recovery_index float
+  highlights string
+  points_today int
+}
+
+Table ClinicalRule {
+  rule_id uuid [pk]
+  managed_by_admin_id uuid
+  rule_code string [unique]
+  rule_text string
+  activation_status string
+  version_no int
+  updated_at datetime
+}
+
+Table ClinicalRuleCondition {
+  condition_id uuid [pk]
+  rule_id uuid
+  metric_name string
+  operator string
+  threshold_value float
+}
+
+Table ClinicalRuleAction {
+  action_id uuid [pk]
+  rule_id uuid
+  action_type string
+  action_payload string
+}
+
+Table RuleExecutionLog {
+  execution_id uuid [pk]
+  rule_id uuid
+  patient_id uuid
+  result string
+  executed_at datetime
+}
+
+Table MedicalReference {
+  reference_id uuid [pk]
+  rule_id uuid
+  title string
+  source_name string
+  citation string
+  url string
+  is_trusted boolean
+}
+
+Table ClinicalRuleProposal {
+  proposal_id uuid [pk]
+  doctor_id uuid
+  resulting_rule_id uuid
+  proposal_text string
+  evidence_notes string
+  status string
+  proposed_at datetime
+}
+
+Table AIServiceSetting {
+  setting_id uuid [pk]
+  admin_id uuid
+  ai_engine_id uuid
+  error_sensitivity float
+  max_response_ms int
+  active_model_ids string
+  applied_at datetime
+}
+
+Table AIModelVersion {
+  model_id uuid [pk]
+  ai_engine_id uuid
+  model_name string
+  model_version string
+  purpose string
+  is_active boolean
+}
+
+Table AIPerformanceMetric {
+  metric_id uuid [pk]
+  model_id uuid
+  accuracy float
+  precision_score float
+  recall_score float
+  latency_ms float
+  measured_at datetime
+}
+
+Table AIRun {
+  run_id uuid [pk]
+  ai_engine_id uuid
+  model_id uuid
+  run_type string
+  status string
+  confidence float
+  failure_reason string
+  started_at datetime
+  finished_at datetime
+}
+
+Table AIRunIO {
+  io_id uuid [pk]
+  run_id uuid
+  io_direction string
+  payload_uri string
+  content_type string
+}
+
+Table AIApproval {
+  approval_id uuid [pk]
+  run_id uuid
+  doctor_id uuid
+  decision string
+  notes string
+  decided_at datetime
+}
+
+Table ImagingAIAnalysis {
+  imaging_ai_id uuid [pk]
+  study_id uuid
+  ai_engine_id uuid
+  run_id uuid
+  preliminary_findings string
+  confidence_level string
+  disclaimer string
+  generated_at datetime
+}
+
+Table RelapseRiskAnalysis {
+  risk_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  record_id uuid
+  ai_engine_id uuid
+  risk_score float
+  risk_level string
+  contributing_factors string
+  analyzed_at datetime
+}
+
+Table RAGDocument {
+  rag_doc_id uuid [pk]
+  reference_id uuid 
+  content_uri string
+  indexed_at datetime
+}
+
+Table RAGChunk {
+  chunk_id uuid [pk]
+  rag_doc_id uuid
+  chunk_index int
+  chunk_text string
+}
+
+Table EmbeddingIndex {
+  embedding_id uuid [pk]
+  chunk_id uuid
+  vector_ref string
+  model_name string
+}
+
+Table TrustedQAAnswer {
+  qa_id uuid [pk]
+  patient_id uuid
+  ai_engine_id uuid
+  chunk_id uuid
+  question string
+  answer string
+  answered_at datetime
+}
+
+Table NotificationTemplate {
+  template_id uuid [pk]
+  template_code string [unique]
+  channel string
+  title_template string
+  body_template string
+}
+
+Table Notification {
+  notification_id uuid [pk]
+  admin_id uuid
+  template_id uuid
+  notification_type string
+  title string
+  body string
+  priority string
+  audience_filter string
+  schedule_status string
+  publish_at datetime
+  dedupe_key string
+}
+
+Table NotificationDelivery {
+  delivery_id uuid [pk]
+  notification_id uuid
+  user_id uuid
+  channel string
+  delivery_status string
+  attempt_no int
+  attempted_at datetime
+  delivered_at datetime
+}
+
+Table UserNotificationState {
+  state_id uuid [pk]
+  notification_id uuid
+  user_id uuid
+  read_flag boolean
+  read_at datetime
+  archived boolean
+}
+
+Table MotorDeclineAlert {
+  decline_alert_id uuid [pk]
+  patient_id uuid
+  doctor_id uuid
+  ai_engine_id uuid
+  notification_id uuid
+  metrics_summary string
+  threshold_code string
+  raised_at datetime
+}
+
+Table TherapeuticWarning {
+  warning_id uuid [pk]
+  patient_id uuid
+  doctor_id uuid
+  ai_engine_id uuid
+  notification_id uuid
+  warning_text string
+  cause_code string
+  issued_at datetime
+}
+
+Table ClinicalEarlyWarning {
+  early_warning_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  doctor_id uuid
+  guardian_id uuid
+  ai_engine_id uuid
+  notification_id uuid
+  severity string
+  trigger_summary string
+  pathway_status string
+  detected_at datetime
+}
+
+Table IncidentDocumentation {
+  documentation_id uuid [pk]
+  early_warning_id uuid
+  record_id uuid
+  doctor_id uuid
+  clinical_notes string
+  action_taken string
+  documented_at datetime
+}
+
+Table FollowUpNotification {
+  followup_id uuid [pk]
+  patient_id uuid
+  guardian_id uuid
+  notification_id uuid
+  followup_type string
+  details string
+  created_at datetime
+}
+
+Table Conversation {
+  conversation_id uuid [pk]
+  episode_id uuid
+  conversation_type string
+  urgency string
+  status string
+  opened_at datetime
+}
+
+Table ConversationParticipant {
+  participant_id uuid [pk]
+  conversation_id uuid
+  user_id uuid
+  participant_role string
+  joined_at datetime
+}
+
+Table Message {
+  message_id uuid [pk]
+  conversation_id uuid
+  sender_user_id uuid
+  content string
+  message_status string
+  is_medical_alert boolean
+  sent_at datetime
+}
+
+Table MessageAttachment {
+  attachment_id uuid [pk]
+  message_id uuid
+  file_id uuid
+  attachment_type string
+}
+
+Table MessageDelivery {
+  msg_delivery_id uuid [pk]
+  message_id uuid
+  channel string
+  delivery_status string
+  attempt_no int
+  attempted_at datetime
+}
+
+Table MessageReadReceipt {
+  receipt_id uuid [pk]
+  message_id uuid
+  reader_user_id uuid
+  read_at datetime
+}
+
+Table UrgentContactRequest {
+  urgent_id uuid [pk]
+  guardian_id uuid
+  doctor_id uuid
+  conversation_id uuid
+  urgency_reason string
+  message string
+  status string
+  requested_at datetime
+}
+
+Table EmergencyHelpRequest {
+  help_id uuid [pk]
+  patient_id uuid
+  notification_id uuid
+  source_context string
+  confirmed boolean
+  status string
+  triggered_at datetime
+}
+
+Table ClinicalConsultation {
+  consultation_id uuid [pk]
+  author_doctor_id uuid
+  patient_id uuid
+  episode_id uuid
+  community_consent_id uuid
+  snapshot_id uuid
+  title string
+  clinical_question string
+  status string
+  posted_at datetime
+}
+
+Table ConsultationResponse {
+  response_id uuid [pk]
+  consultation_id uuid
+  responder_doctor_id uuid
+  response_text string
+  stance string
+  responded_at datetime
+}
+
+Table ConsultationReport {
+  report_id uuid [pk]
+  reporter_user_id uuid
+  report_type string
+  description string
+  reported_at datetime
+  status string
+}
+
+Table SupervisionCase {
+  supervision_id uuid [pk]
+  consultation_id uuid
+  report_id uuid
+  case_type string
+  priority string
+  status string
+  opened_at datetime
+}
+
+Table SupervisionAction {
+  action_id uuid [pk]
+  supervision_id uuid
+  admin_id uuid
+  action_type string
+  rationale string
+  acted_at datetime
+}
+
+Table ConsultationAppointment {
+  consult_appt_id uuid [pk]
+  appointment_id uuid
+  patient_id uuid
+  doctor_id uuid
+  notes string
+}
+
+Table SmartReport {
+  smart_report_id uuid [pk]
+  patient_id uuid
+  episode_id uuid
+  target_user_id uuid
+  ai_engine_id uuid
+  run_id uuid
+  audience_type string
+  period_type string
+  period_start date
+  period_end date
+  content_uri string
+  generated_at datetime
+}
+
+Table ReportExport {
+  export_id uuid [pk]
+  smart_report_id uuid
+  file_id uuid
+  export_format string
+  exported_at datetime
+}
+
+Table ProgressReport {
+  progress_report_id uuid [pk]
+  smart_report_id uuid [unique] 
+  compliance_rate float
+  movement_improvement float
+}
+
+Table DetailedClinicalReport {
+  detailed_report_id uuid [pk]
+  smart_report_id uuid [unique] 
+  doctor_id uuid
+  analysis_id uuid
+  joints_summary string
+  errors_summary string
+  progress_curve_uri string
+}
+
+Table WeeklyCareSummary {
+  weekly_summary_id uuid [pk]
+  smart_report_id uuid [unique] 
+  guardian_id uuid
+  week_start date
+  completed_sessions int
+  performance_notes string
+}
+
+Table ReportSession {
+  report_session_id uuid [pk]
+  smart_report_id uuid
+  session_id uuid
+
+  indexes {
+    (smart_report_id, session_id) [unique]
+  }
+}
+
+Table StatisticSnapshot {
+  snapshot_id uuid [pk]
+  admin_id uuid
+  period_start date
+  period_end date
+  completed_sessions int
+  avg_compliance float
+  alerts_count int
+  export_uri string
+  generated_at datetime
+}
+
+Table BackupSchedule {
+  schedule_id uuid [pk]
+  admin_id uuid
+  cron_expr string
+  retention_policy string
+  is_enabled boolean
+}
+
+Table BackupJob {
+  backup_id uuid [pk]
+  schedule_id uuid
+  admin_id uuid
+  backup_type string
+  scope string
+  storage_uri string
+  checksum string
+  encryption_status string
+  job_status string
+  started_at datetime
+  finished_at datetime
+}
+
+Table BackupIntegrityCheck {
+  integrity_id uuid [pk]
+  backup_id uuid
+  passed boolean
+  details string
+  checked_at datetime
+}
+
+Table RestoreOperation {
+  restore_id uuid [pk]
+  backup_id uuid
+  admin_id uuid
+  restore_status string
+  started_at datetime
+  finished_at datetime
+}
+
+Table RestoreVerification {
+  verification_id uuid [pk]
+  restore_id uuid [unique]
+  data_consistent boolean
+  verification_notes string
+  verified_at datetime
+}
+
+Table AuditLogEntry {
+  audit_id uuid [pk]
+  actor_user_id uuid
+  reviewed_by_admin_id uuid
+  record_id uuid
+  action_type string
+  entity_name string
+  details string
+  occurred_at datetime
+}
+
+Table AuditReviewNote {
+  note_id uuid [pk]
+  audit_id uuid
+  admin_id uuid
+  note_text string
+  protection_action string
+  noted_at datetime
+}
+
+Table DataAccessLog {
+  access_id uuid [pk]
+  user_id uuid
+  record_id uuid
+  access_type string
+  purpose string
+  accessed_at datetime
+}
+
+Table StoredFile {
+  file_id uuid [pk]
+  uploader_user_id uuid
+  mime_type string
+  storage_uri string
+  checksum string
+  scan_status string
+  encryption_key_ref string
+  uploaded_at datetime
+}
+
+// ---------------- Relationships ----------------
+Ref: UserRole.user_id > User.user_id // has
+Ref: UserRole.role_id > Role.role_id // assigned_to
+Ref: RolePermission.role_id > Role.role_id // grants
+Ref: RolePermission.permission_id > Permission.permission_id // included_in
+Ref: LoginSession.user_id > User.user_id // opens
+Ref: LoginAttempt.user_id > User.user_id // attempts
+Ref: AuthToken.user_id > User.user_id // owns
+Ref: PatientProfile.user_id - User.user_id // may_be
+Ref: DoctorProfile.user_id - User.user_id // may_be
+Ref: GuardianProfile.user_id - User.user_id // may_be
+Ref: AdminProfile.user_id - User.user_id // may_be
+Ref: UserBanRecord.user_id > User.user_id // may_have
+Ref: PasswordResetRequest.user_id > User.user_id // requests
+Ref: PrivacyConsent.user_id > User.user_id // accepts
+Ref: PrivacyConsent.policy_id > ConsentPolicy.policy_id // versioned_as
+Ref: NotificationPreference.user_id - User.user_id // configures
+Ref: LicenseCredential.doctor_id > DoctorProfile.doctor_id // owns
+Ref: LicenseReview.admin_id > AdminProfile.admin_id // reviews
+Ref: LicenseReview.license_id > LicenseCredential.license_id // subject_of
+Ref: SpecialtyExpertise.doctor_id > DoctorProfile.doctor_id // declares
+Ref: PatientGuardianLink.patient_id > PatientProfile.patient_id // linked_to
+Ref: PatientGuardianLink.guardian_id > GuardianProfile.guardian_id // follows
+Ref: CareEpisode.patient_id > PatientProfile.patient_id // has_cases
+Ref: Diagnosis.episode_id > CareEpisode.episode_id // includes
+Ref: CaseStatusHistory.episode_id > CareEpisode.episode_id // tracks
+Ref: CareAssignment.patient_id > PatientProfile.patient_id // treated_under
+Ref: CareAssignment.episode_id > CareEpisode.episode_id // covered_by
+Ref: CareAssignment.doctor_id > DoctorProfile.doctor_id // assigned_to
+Ref: DoctorChangeRequest.patient_id > PatientProfile.patient_id // requests
+Ref: DoctorChangeRequest.episode_id > CareEpisode.episode_id // transfers
+Ref: DoctorChangeRequest.requested_doctor_id > DoctorProfile.doctor_id // receives
+Ref: ClinicalComplaint.patient_id > PatientProfile.patient_id // submits
+Ref: ClinicalComplaint.episode_id > CareEpisode.episode_id // opens_with
+Ref: TriageResult.complaint_id - ClinicalComplaint.complaint_id // produces
+Ref: UnassignedCase.complaint_id - ClinicalComplaint.complaint_id // becomes
+Ref: CaseAssignment.case_id - UnassignedCase.case_id // assigned_via
+Ref: CaseAssignment.doctor_id > DoctorProfile.doctor_id // receives_case
+Ref: CaseAssignment.admin_id > AdminProfile.admin_id // approves
+Ref: DoctorCandidateReview.patient_id > PatientProfile.patient_id // reviewed_for
+Ref: DoctorCandidateReview.doctor_id > DoctorProfile.doctor_id // candidate
+Ref: MedicalRecord.episode_id - CareEpisode.episode_id // owns_record
+Ref: MedicalHistoryEntry.record_id > MedicalRecord.record_id // contains
+Ref: ChronicCondition.record_id > MedicalRecord.record_id // lists
+Ref: ClinicalDocument.record_id > MedicalRecord.record_id // stores
+Ref: ImagingStudy.record_id > MedicalRecord.record_id // includes
+Ref: DemographicProfile.record_id > MedicalRecord.record_id // has
+Ref: ClinicalDocument.author_user_id > User.user_id // authors
+Ref: ImagingSeries.study_id > ImagingStudy.study_id // contains
+Ref: ImagingInstance.series_id > ImagingSeries.series_id // stores
+Ref: ImagingQualityCheck.study_id - ImagingStudy.study_id // checked_by
+Ref: ClinicalInterpretation.study_id - ImagingStudy.study_id // interpreted_by
+Ref: ClinicalInterpretation.doctor_id > DoctorProfile.doctor_id // writes
+Ref: SimplifiedExplanation.interpretation_id - ClinicalInterpretation.interpretation_id // explains_to_patient
+Ref: RecordShareRequest.record_id > MedicalRecord.record_id // shared_via
+Ref: RecordShareRequest.patient_id > PatientProfile.patient_id // consents_to
+Ref: RecordShareRequest.requester_doctor_id > DoctorProfile.doctor_id // initiates
+Ref: ShareRecipient.share_id > RecordShareRequest.share_id // targets
+Ref: ShareRecipient.recipient_user_id > User.user_id // receives_share
+Ref: RecordShareItem.share_id > RecordShareRequest.share_id // includes_item
+Ref: ReferralSummary.share_id - RecordShareRequest.share_id // may_attach
+Ref: ReferralSummary.generated_by_ai_id > AIEngine.ai_engine_id // generates
+Ref: CommunityShareConsent.record_id > MedicalRecord.record_id // may_publish
+Ref: CommunityShareConsent.patient_id > PatientProfile.patient_id // approves
+Ref: AnonymizedCaseSnapshot.community_consent_id - CommunityShareConsent.community_consent_id // creates
+Ref: Exercise.created_by_admin_id > AdminProfile.admin_id // maintains
+Ref: SafeAngularRange.exercise_id > Exercise.exercise_id // defines
+Ref: Contraindication.exercise_id > Exercise.exercise_id // has
+Ref: ExerciseMedia.exercise_id > Exercise.exercise_id // guided_by
+Ref: ExerciseCategoryLink.exercise_id > Exercise.exercise_id // classified_as
+Ref: ExerciseCategoryLink.category_id > ExerciseCategory.category_id // groups
+Ref: RehabilitationPlan.episode_id > CareEpisode.episode_id // follows_plan
+Ref: RehabilitationPlan.patient_id > PatientProfile.patient_id // assigned_plan
+Ref: RehabilitationPlan.doctor_id > DoctorProfile.doctor_id // authors
+Ref: PlanExercise.plan_id > RehabilitationPlan.plan_id // includes
+Ref: PlanExercise.exercise_id > Exercise.exercise_id // prescribed_in
+Ref: PlanRevision.plan_id > RehabilitationPlan.plan_id // revised_by
+Ref: RehabilitationPlan.protocol_id > ClinicalProtocol.protocol_id // guides
+Ref: ProviderAvailability.doctor_id > DoctorProfile.doctor_id // publishes
+Ref: AppointmentSlot.availability_id > ProviderAvailability.availability_id // offers
+Ref: Appointment.patient_id > PatientProfile.patient_id // books
+Ref: Appointment.slot_id - AppointmentSlot.slot_id // filled_by
+Ref: Appointment.episode_id > CareEpisode.episode_id // related_to
+Ref: AppointmentStatusHistory.appointment_id > Appointment.appointment_id // history
+Ref: RehabSession.patient_id > PatientProfile.patient_id // performs
+Ref: RehabSession.plan_id > RehabilitationPlan.plan_id // schedules
+Ref: RehabSession.plan_exercise_id > PlanExercise.plan_exercise_id // executed_as
+Ref: RehabSession.episode_id > CareEpisode.episode_id // belongs_to
+Ref: SessionAssessment.session_id - RehabSession.session_id // assessed_in
+Ref: SessionAttendance.session_id > RehabSession.session_id // tracked_by
+Ref: SessionAttendance.guardian_id > GuardianProfile.guardian_id // confirms
+Ref: SessionReminder.session_id > RehabSession.session_id // reminded_via
+Ref: SessionReminder.guardian_id > GuardianProfile.guardian_id // sends
+Ref: CaregiverGuidance.guardian_id > GuardianProfile.guardian_id // receives
+Ref: CaregiverGuidance.exercise_id > Exercise.exercise_id // explains
+Ref: DeviceCaptureSession.session_id - RehabSession.session_id // captured_via
+Ref: MotionAnalysis.capture_id - DeviceCaptureSession.capture_id // feeds
+Ref: MotionAnalysis.ai_engine_id > AIEngine.ai_engine_id // computes
+Ref: JointMeasurement.analysis_id > MotionAnalysis.analysis_id // records
+Ref: MotionSample.analysis_id > MotionAnalysis.analysis_id // samples
+Ref: MotionFeedbackEvent.analysis_id > MotionAnalysis.analysis_id // emits
+Ref: VitalSignObservation.analysis_id > MotionAnalysis.analysis_id // observes
+Ref: SafetyIncident.analysis_id > MotionAnalysis.analysis_id // may_trigger
+Ref: EmergencyStop.incident_id - SafetyIncident.incident_id // causes
+Ref: MotionReview.doctor_id > DoctorProfile.doctor_id // reviews
+Ref: MotionReview.analysis_id > MotionAnalysis.analysis_id // validated_in
+Ref: GamificationProfile.patient_id - PatientProfile.patient_id // earns_via
+Ref: RewardPointTx.gamification_id > GamificationProfile.gamification_id // logs
+Ref: RewardPointTx.session_id > RehabSession.session_id // awards
+Ref: RewardRedemption.reward_id > RewardCatalog.reward_id // redeemed_as
+Ref: RewardRedemption.gamification_id > GamificationProfile.gamification_id // redeems
+Ref: MotivationMessage.ai_engine_id > AIEngine.ai_engine_id // triggers
+Ref: MotivationMessage.patient_id > PatientProfile.patient_id // receives
+Ref: DailyRecoveryBoard.patient_id > PatientProfile.patient_id // views
+Ref: PatientBadge.badge_id > Badge.badge_id // awarded_as
+Ref: PatientBadge.patient_id > PatientProfile.patient_id // earns
+Ref: ClinicalRule.managed_by_admin_id > AdminProfile.admin_id // manages
+Ref: ClinicalRuleCondition.rule_id > ClinicalRule.rule_id // constrained_by
+Ref: ClinicalRuleAction.rule_id > ClinicalRule.rule_id // executes
+Ref: MedicalReference.rule_id > ClinicalRule.rule_id // backed_by
+Ref: RuleExecutionLog.rule_id > ClinicalRule.rule_id // fired_in
+Ref: RuleExecutionLog.patient_id > PatientProfile.patient_id // evaluated_in
+Ref: ClinicalRuleProposal.doctor_id > DoctorProfile.doctor_id // proposes
+Ref: ClinicalRuleProposal.resulting_rule_id - ClinicalRule.rule_id // may_become
+Ref: AIServiceSetting.admin_id > AdminProfile.admin_id // configures
+Ref: AIServiceSetting.ai_engine_id > AIEngine.ai_engine_id // applies
+Ref: AIModelVersion.ai_engine_id > AIEngine.ai_engine_id // runs
+Ref: AIPerformanceMetric.model_id > AIModelVersion.model_id // measured_by
+Ref: AIRun.ai_engine_id > AIEngine.ai_engine_id // executes
+Ref: AIRun.model_id > AIModelVersion.model_id // used_in
+Ref: AIRunIO.run_id > AIRun.run_id // io
+Ref: AIApproval.run_id - AIRun.run_id // approved_via
+Ref: AIApproval.doctor_id > DoctorProfile.doctor_id // approves
+Ref: ImagingAIAnalysis.ai_engine_id > AIEngine.ai_engine_id // produces
+Ref: ImagingAIAnalysis.study_id - ImagingStudy.study_id // analyzed_in
+Ref: ImagingAIAnalysis.run_id > AIRun.run_id // logged_as
+Ref: RelapseRiskAnalysis.ai_engine_id > AIEngine.ai_engine_id // predicts
+Ref: RelapseRiskAnalysis.patient_id > PatientProfile.patient_id // assessed_in
+Ref: RelapseRiskAnalysis.episode_id > CareEpisode.episode_id // risk_for
+Ref: RelapseRiskAnalysis.record_id > MedicalRecord.record_id // inputs
+Ref: RAGChunk.rag_doc_id > RAGDocument.rag_doc_id // chunked_into
+Ref: EmbeddingIndex.chunk_id > RAGChunk.chunk_id // indexed_as
+Ref: TrustedQAAnswer.ai_engine_id > AIEngine.ai_engine_id // answers
+Ref: TrustedQAAnswer.chunk_id > RAGChunk.chunk_id // supports
+Ref: TrustedQAAnswer.patient_id > PatientProfile.patient_id // asks
+Ref: Notification.admin_id > AdminProfile.admin_id // publishes
+Ref: Notification.template_id > NotificationTemplate.template_id // instantiates
+Ref: NotificationDelivery.notification_id > Notification.notification_id // delivered_via
+Ref: NotificationDelivery.user_id > User.user_id // receives
+Ref: UserNotificationState.notification_id > Notification.notification_id // tracked_for
+Ref: UserNotificationState.user_id > User.user_id // reads
+Ref: MotorDeclineAlert.ai_engine_id > AIEngine.ai_engine_id // raises
+Ref: MotorDeclineAlert.patient_id > PatientProfile.patient_id // about
+Ref: MotorDeclineAlert.doctor_id > DoctorProfile.doctor_id // notified
+Ref: MotorDeclineAlert.notification_id - Notification.notification_id // emits
+Ref: TherapeuticWarning.ai_engine_id > AIEngine.ai_engine_id // issues
+Ref: TherapeuticWarning.patient_id > PatientProfile.patient_id // linked_to
+Ref: TherapeuticWarning.doctor_id > DoctorProfile.doctor_id // receives
+Ref: TherapeuticWarning.notification_id - Notification.notification_id // emits
+Ref: ClinicalEarlyWarning.ai_engine_id > AIEngine.ai_engine_id // detects
+Ref: ClinicalEarlyWarning.patient_id > PatientProfile.patient_id // concerns
+Ref: ClinicalEarlyWarning.episode_id > CareEpisode.episode_id // episode_alert
+Ref: ClinicalEarlyWarning.guardian_id > GuardianProfile.guardian_id // alerted
+Ref: ClinicalEarlyWarning.doctor_id > DoctorProfile.doctor_id // handles
+Ref: ClinicalEarlyWarning.notification_id - Notification.notification_id // emits
+Ref: IncidentDocumentation.early_warning_id - ClinicalEarlyWarning.early_warning_id // requires
+Ref: IncidentDocumentation.record_id > MedicalRecord.record_id // stores
+Ref: FollowUpNotification.patient_id > PatientProfile.patient_id // generates
+Ref: FollowUpNotification.guardian_id > GuardianProfile.guardian_id // receives
+Ref: FollowUpNotification.notification_id - Notification.notification_id // emits
+Ref: ConversationParticipant.user_id > User.user_id // joins
+Ref: ConversationParticipant.conversation_id > Conversation.conversation_id // includes
+Ref: Message.conversation_id > Conversation.conversation_id // contains
+Ref: Message.sender_user_id > User.user_id // sends
+Ref: MessageAttachment.message_id > Message.message_id // attaches
+Ref: MessageDelivery.message_id > Message.message_id // delivery
+Ref: MessageReadReceipt.message_id > Message.message_id // read_by
+Ref: Conversation.episode_id > CareEpisode.episode_id // context
+Ref: UrgentContactRequest.guardian_id > GuardianProfile.guardian_id // opens
+Ref: UrgentContactRequest.doctor_id > DoctorProfile.doctor_id // receives
+Ref: UrgentContactRequest.conversation_id - Conversation.conversation_id // opens_chat
+Ref: EmergencyHelpRequest.patient_id > PatientProfile.patient_id // triggers
+Ref: EmergencyHelpRequest.notification_id - Notification.notification_id // broadcasts
+Ref: ClinicalConsultation.author_doctor_id > DoctorProfile.doctor_id // posts
+Ref: ConsultationResponse.responder_doctor_id > DoctorProfile.doctor_id // responds
+Ref: ConsultationResponse.consultation_id > ClinicalConsultation.consultation_id // receives
+Ref: ClinicalConsultation.patient_id > PatientProfile.patient_id // may_concern
+Ref: ClinicalConsultation.episode_id > CareEpisode.episode_id // discusses
+Ref: ClinicalConsultation.community_consent_id > CommunityShareConsent.community_consent_id // enables
+Ref: ClinicalConsultation.snapshot_id > AnonymizedCaseSnapshot.snapshot_id // packages
+Ref: SupervisionCase.consultation_id > ClinicalConsultation.consultation_id // may_escalate
+Ref: SupervisionCase.report_id > ConsultationReport.report_id // reported_as
+Ref: ConsultationReport.reporter_user_id > User.user_id // reports
+Ref: SupervisionAction.admin_id > AdminProfile.admin_id // decides
+Ref: SupervisionAction.supervision_id > SupervisionCase.supervision_id // resolved_by
+Ref: ConsultationAppointment.patient_id > PatientProfile.patient_id // requests
+Ref: ConsultationAppointment.doctor_id > DoctorProfile.doctor_id // coordinates
+Ref: ConsultationAppointment.appointment_id - Appointment.appointment_id // specializes
+Ref: SmartReport.ai_engine_id > AIEngine.ai_engine_id // generates
+Ref: SmartReport.run_id > AIRun.run_id // produced_by
+Ref: SmartReport.patient_id > PatientProfile.patient_id // about
+Ref: SmartReport.episode_id > CareEpisode.episode_id // covers
+Ref: SmartReport.target_user_id > User.user_id // targeted_to
+Ref: ReportExport.smart_report_id > SmartReport.smart_report_id // exported_as
+Ref: DetailedClinicalReport.doctor_id > DoctorProfile.doctor_id // views
+Ref: WeeklyCareSummary.guardian_id > GuardianProfile.guardian_id // views
+Ref: DetailedClinicalReport.analysis_id > MotionAnalysis.analysis_id // feeds
+Ref: StatisticSnapshot.admin_id > AdminProfile.admin_id // views
+Ref: BackupSchedule.admin_id > AdminProfile.admin_id // configures
+Ref: BackupJob.schedule_id > BackupSchedule.schedule_id // runs
+Ref: BackupJob.admin_id > AdminProfile.admin_id // triggers
+Ref: BackupIntegrityCheck.backup_id > BackupJob.backup_id // verified_by
+Ref: RestoreOperation.backup_id > BackupJob.backup_id // restored_by
+Ref: RestoreOperation.admin_id > AdminProfile.admin_id // executes
+Ref: RestoreVerification.restore_id - RestoreOperation.restore_id // verified_in
+Ref: AuditLogEntry.actor_user_id > User.user_id // acts_in
+Ref: AuditLogEntry.reviewed_by_admin_id > AdminProfile.admin_id // reviews
+Ref: AuditLogEntry.record_id > MedicalRecord.record_id // may_access
+Ref: AuditReviewNote.audit_id > AuditLogEntry.audit_id // annotated_by
+Ref: AuditReviewNote.admin_id > AdminProfile.admin_id // writes_note
+Ref: DataAccessLog.user_id > User.user_id // accesses
+Ref: DataAccessLog.record_id > MedicalRecord.record_id // accessed_as
+Ref: ImagingInstance.file_id > StoredFile.file_id // stores_bytes
+Ref: ExerciseMedia.file_id > StoredFile.file_id // hosts
+Ref: MessageAttachment.file_id > StoredFile.file_id // hosts
+Ref: ReportExport.file_id > StoredFile.file_id // hosts
+Ref: StoredFile.uploader_user_id > User.user_id // uploads
+
+// ---------------- Relationships added / fixed (v2) ----------------
+Ref: UserBanRecord.banned_by_admin_id > AdminProfile.admin_id // issued_by
+Ref: DoctorChangeRequest.current_doctor_id > DoctorProfile.doctor_id // transfers_from
+Ref: PlanRevision.revised_by_doctor_id > DoctorProfile.doctor_id // revised_by
+Ref: IncidentDocumentation.doctor_id > DoctorProfile.doctor_id // documented_by
+Ref: MessageReadReceipt.reader_user_id > User.user_id // read_by
+Ref: ClinicalProtocol.approved_by_doctor_id > DoctorProfile.doctor_id // approves
+Ref: SessionReminder.notification_id - Notification.notification_id // emits
+Ref: ReportSession.smart_report_id > SmartReport.smart_report_id // covers
+Ref: ReportSession.session_id > RehabSession.session_id // aggregated_in
+Ref: ProgressReport.smart_report_id - SmartReport.smart_report_id // details
+Ref: DetailedClinicalReport.smart_report_id - SmartReport.smart_report_id // details
+Ref: WeeklyCareSummary.smart_report_id - SmartReport.smart_report_id // details
+Ref: RAGDocument.reference_id > MedicalReference.reference_id // sourced_from
+Ref: TriageResult.ai_engine_id > AIEngine.ai_engine_id // produced_by
+Ref: TriageResult.ai_run_id > AIRun.run_id // logged_as
+Ref: RehabilitationPlan.ai_run_id > AIRun.run_id // generated_by_run
+Ref: RehabilitationPlan.approved_by_doctor_id > DoctorProfile.doctor_id // approved_by
+Ref: PlanRevision.ai_run_id > AIRun.run_id // proposed_by_run
+
+// ================= Scenario Table Groups (18 scenarios / 142 tables) =================
+// Each table belongs to exactly one group (dbml requirement).
+
+TableGroup "01_المصادقة والصلاحيات" [color: #E53935] {
+  User
+  Role
+  Permission
+  UserRole
+  RolePermission
+  LoginSession
+  LoginAttempt
+  AuthToken
+  PasswordResetRequest
+  UserBanRecord
+}
+
+TableGroup "02_الملفات الشخصية والموافقات والتحقق" [color: #9fd81b] {
+  PatientProfile
+  DoctorProfile
+  GuardianProfile
+  AdminProfile
+  ConsentPolicy
+  PrivacyConsent
+  NotificationPreference
+  LicenseCredential
+  LicenseReview
+  SpecialtyExpertise
+  PatientGuardianLink
+}
+
+TableGroup "03_ إدخال الحالة والتصنيف والتعيين" [color: #8E24AA] {
+  ClinicalComplaint
+  TriageResult
+  UnassignedCase
+  CaseAssignment
+  DoctorCandidateReview
+  CareEpisode
+  Diagnosis
+  CaseStatusHistory
+  CareAssignment
+  DoctorChangeRequest
+}
+
+TableGroup "04_السجل الطبي (EHR)" [color: #b13592] {
+  MedicalRecord
+  DemographicProfile
+  MedicalHistoryEntry
+  ChronicCondition
+  ClinicalDocument
+  RecordShareRequest
+  ShareRecipient
+  RecordShareItem
+  ReferralSummary
+}
+
+TableGroup "05_حزمة الصور الشعاعية " [color: #ab3939] {
+  ImagingStudy
+  ImagingSeries
+  ImagingInstance
+  ImagingQualityCheck
+  ClinicalInterpretation
+  SimplifiedExplanation
+  ImagingAIAnalysis
+}
+
+TableGroup "06_مكتبة التمارين و الخطة العلاجية " [color: #1ee549] {
+  Exercise
+  ExerciseMedia
+  ExerciseCategory
+  ExerciseCategoryLink
+  SafeAngularRange
+  Contraindication
+  ClinicalProtocol
+  RehabilitationPlan
+  PlanExercise
+  PlanRevision
+}
+
+TableGroup "07_المواعيد و الجدولة " [color: #2c03e5] {
+  ProviderAvailability
+  AppointmentSlot
+  Appointment
+  AppointmentStatusHistory
+  ConsultationAppointment
+}
+
+TableGroup "08_الجلسة العلاجية و المرافق" [color: #8ac100] {
+  RehabSession
+  SessionAssessment
+  SessionAttendance
+  SessionReminder
+  CaregiverGuidance
+}
+
+TableGroup "09_حزمة التقاط الحركة والردود الفورية والأمان" [color: #00897B] {
+  DeviceCaptureSession
+  MotionAnalysis
+  MotionSample
+  JointMeasurement
+  MotionFeedbackEvent
+  VitalSignObservation
+  SafetyIncident
+  EmergencyStop
+  MotionReview
+}
+
+TableGroup "10_التحفيز و المكافآت" [color: #61184f] {
+  GamificationProfile
+  RewardPointTx
+  RewardCatalog
+  RewardRedemption
+  Badge
+  PatientBadge
+  MotivationMessage
+  DailyRecoveryBoard
+}
+
+TableGroup "11_تنبيهات الطوارئ والإشعارات" [color: #13aed9] {
+  NotificationTemplate
+  Notification
+  NotificationDelivery
+  UserNotificationState
+  MotorDeclineAlert
+  TherapeuticWarning
+  ClinicalEarlyWarning
+  IncidentDocumentation
+  FollowUpNotification
+  EmergencyHelpRequest
+  RelapseRiskAnalysis
+}
+
+TableGroup "12_المراسلة الآمنة" [color: #C0CA33] {
+  Conversation
+  ConversationParticipant
+  Message
+  MessageAttachment
+  MessageDelivery
+  MessageReadReceipt
+  UrgentContactRequest
+}
+
+TableGroup "13_مجتمع الأطباء والاستشارات" [color: #a335fd] {
+  CommunityShareConsent
+  AnonymizedCaseSnapshot
+  ClinicalConsultation
+  ConsultationResponse
+  ConsultationReport
+  SupervisionCase
+  SupervisionAction
+}
+
+TableGroup "14_التقارير والإحصائيات" [color: #fb00a3] {
+  SmartReport
+  ReportExport
+  ReportSession
+  ProgressReport
+  DetailedClinicalReport
+  WeeklyCareSummary
+  StatisticSnapshot
+}
+
+TableGroup "15_Knowledge_Rules_and_RAG" [color: #420a28] {
+  ClinicalRule
+  ClinicalRuleCondition
+  ClinicalRuleAction
+  RuleExecutionLog
+  MedicalReference
+  ClinicalRuleProposal
+  RAGDocument
+  RAGChunk
+  EmbeddingIndex
+  TrustedQAAnswer
+}
+
+TableGroup "16_ادارة الكاء الصنعي" [color: #6D4C41] {
+  AIEngine
+  AIServiceSetting
+  AIModelVersion
+  AIPerformanceMetric
+  AIRun
+  AIRunIO
+  AIApproval
+}
+
+TableGroup "17_النسخ الاحتياطي والاستعادة" [color: #7e4ed2] {
+  BackupSchedule
+  BackupJob
+  BackupIntegrityCheck
+  RestoreOperation
+  RestoreVerification
+}
+
+TableGroup "18_التدقيق وتخزين الملفات" [color: #0b3b17] {
+  AuditLogEntry
+  AuditReviewNote
+  DataAccessLog
+  StoredFile
+}
