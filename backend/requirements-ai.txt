@@ -1,0 +1,9 @@
+# Install only after the AI phase is approved.
+# mediapipe
+# opencv-python
+# experta
+# torch
+# scikit-learn
+# langchain
+# ollama
+# pydicom
